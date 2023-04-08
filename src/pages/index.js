@@ -1,124 +1,179 @@
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import { Are_You_Serious, Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
 
+let variableA = 0;
+let variableB = 0;
+
+let varAFilled = false;
+let added = false;
+let mult = false;
+let division = false;
+let sub = false;
+let once = false;
+
 export default function Home() {
+  
+  function clearCalculator(calcArea){//clears input
+    added = false;
+    mult = false;
+    division = false;
+    sub = false;
+    varAFilled = false;
+
+    variableA = 0;
+    variableB = 0;
+    calcArea.value = '0';
+    document.getElementById('clr').style = 'background-color: blueviolet;';
+  }
+  function inverseNumber(calcArea){
+    calcArea.value = ''+-parseFloat(calcArea.value);
+    if (varAFilled){
+      variableB = ''+-parseFloat(variableB);
+    }else{
+      variableA = ''+-parseFloat(variableA);
+    }
+  }
+  //Handles inputs
+  function buttonClick (calcArea, btn) {
+    let tempCalc = (calcArea.value);
+    
+    //Zero stuff
+    if (tempCalc == '0'){tempCalc = '';}
+
+    if (btn.value === '0'){
+      if (tempCalc[0] === '0' || tempCalc === '0'){
+        alert(tempCalc);
+        return;
+      }
+    }else if (btn.value === '0' && tempCalc != '0'){
+      tempCalc += btn.value;
+    }
+    //
+    //Positives
+    tempCalc += btn.value;
+    calcArea.value = tempCalc;
+    if (!varAFilled){
+      variableA = tempCalc;
+    }else{
+      variableB = tempCalc;
+    }
+    return;
+    
+}
+
+  function addFunc(calcArea){
+    calcArea.value = '0';
+    varAFilled = true;
+    added = true;
+  }
+  function multiFunc(){
+    alert("bals");
+  }
+  //Final calculation
+  function summFunc(calcArea){
+    if (added){
+      calcArea.value = ''+(parseFloat(variableA) + parseFloat(variableB));
+      varAFilled = false;
+      document.getElementById('clr').style = 'background-color: red;';
+      if (calcArea.value.includes('N') || calcArea.value == null){calcArea.value = 'Error';}
+      return;
+    }
+    if (sub){
+      calcArea.value = ''+(parseFloat(variableA) - parseFloat(variableB));
+      varAFilled = false;
+      document.getElementById('clr').style = 'background-color: red;';
+      if (calcArea.value.includes('N') || calcArea.value == null){calcArea.value = 'Error';}
+      return;
+    }
+    if (division){
+      calcArea.value = ''+(parseFloat(variableA) / parseFloat(variableB));
+      varAFilled = false;
+      document.getElementById('clr').style = 'background-color: red;';
+      if (calcArea.value.includes('N') || calcArea.value == null){calcArea.value = 'Error';}
+      return;
+    }
+    if (mult){
+      calcArea.value = ''+(parseFloat(variableA) * parseFloat(variableB));
+      varAFilled = false;
+      document.getElementById('clr').style = 'background-color: red;';
+      if (calcArea.value.includes('N') || calcArea.value == null){calcArea.value = 'Error';}
+      return;
+    }
+  }
+  //
+  function subtractFunc(calcArea){
+    calcArea.value = '0';
+    varAFilled = true;
+    sub = true;
+  }
+  function decimalPt(calcArea){
+    if (!calcArea.value.includes('.')){
+      calcArea.value += '.';
+    }
+  }
+  function piNum(calcArea){
+    calcArea.value = ''+Math.PI;
+    if (!varAFilled){
+      variableA = Math.PI;
+    }else{
+      variableB = Math.PI;
+    }
+  }
+  function divisionFunc(calcArea){
+    calcArea.value = '0';
+    varAFilled = true;
+    division = true;
+  }
+  function multFunc(calcArea){
+    calcArea.value = '0';
+    varAFilled = true;
+    mult = true;
+  }
+  function manualEntry(calcArea){
+    if (!varAFilled){
+      variableA = calcArea.value;
+    }else{
+      variableB = calcArea.value;
+    }
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+        
+        <div className="calculatorMainArea">
+          <textarea id='_calculationArea' placeholder='0' onChange={() => manualEntry(document.getElementById("_calculationArea"))}></textarea>
+          <grid>
+            <div className='gridC'>
+              <button id='clr' className="utilityButton" onClick={() => clearCalculator(document.getElementById("_calculationArea"))}>AC</button>
+              <button className="utilityButton" onClick={() => piNum(document.getElementById("_calculationArea"))}>π</button>
+              <button className="utilityButton" onClick={() => inverseNumber(document.getElementById("_calculationArea"))}>Inverse</button>
+            </div>
+
+            <div className='gridC'>
+              <button id='btn1' className="numberButton" onClick={() => buttonClick(document.getElementById("_calculationArea"), document.getElementById("btn1"))} value='0'>0</button>
+              <button id='btn3' className="numberButton" onClick={() => buttonClick(document.getElementById("_calculationArea"), document.getElementById("btn3"))} value='2'>2</button>
+              <button id='btn2' className="numberButton" onClick={() => buttonClick(document.getElementById("_calculationArea"), document.getElementById("btn2"))} value='1'>1</button>
+              <button id='btn4' className="numberButton" onClick={() => buttonClick(document.getElementById("_calculationArea"), document.getElementById("btn4"))} value='3'>3</button>
+              <button id='btn5' className="numberButton" onClick={() => buttonClick(document.getElementById("_calculationArea"), document.getElementById("btn5"))} value='4'>4</button>
+              <button id='btn6' className="numberButton" onClick={() => buttonClick(document.getElementById("_calculationArea"), document.getElementById("btn6"))} value='5'>5</button>
+              <button id='btn7' className="numberButton" onClick={() => buttonClick(document.getElementById("_calculationArea"), document.getElementById("btn7"))} value='6'>6</button>
+              <button id='btn8' className="numberButton" onClick={() => buttonClick(document.getElementById("_calculationArea"), document.getElementById("btn8"))} value='7'>7</button>
+              <button id='btn9' className="numberButton" onClick={() => buttonClick(document.getElementById("_calculationArea"), document.getElementById("btn9"))} value='8'>8</button>
+              <button id='btn10'className="numberButton" onClick={() => buttonClick(document.getElementById("_calculationArea"), document.getElementById("btn10"))} value='9'>9</button>
+              
+              {/* Arithmetic operations below */}
+              <button id='addition' className="operButton" onClick={() => addFunc(document.getElementById("_calculationArea"))}>+</button>
+              <button id='subtraction' className="operButton" onClick={() => subtractFunc(document.getElementById("_calculationArea"))}>-</button>
+              <button id='division' className="operButton" onClick={() => divisionFunc(document.getElementById("_calculationArea"))}>÷</button>
+              <button id='multiplication' className="operButton" onClick={() => multFunc(document.getElementById("_calculationArea"))}>×</button>
+              <button id='decimal' className="operButton" onClick={() => decimalPt(document.getElementById("_calculationArea"))}>.</button>
+              <button id='summary' className="operButton" onClick={() => summFunc(document.getElementById("_calculationArea"))}>=</button>
+            </div>
+          </grid>
         </div>
-      </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
     </main>
   )
 }
